@@ -1,0 +1,19 @@
+{
+  "private": true,
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview"
+  },
+  "devDependencies": {
+    "nuxt": "3.0.0-rc.8"
+  },
+  "dependencies": {
+    "@auth0/auth0-spa-js": "^1.22.2",
+    "@hapi/iron": "^7.0.0",
+    "@nuxtjs/dotenv": "^1.4.1",
+    "h3": "^0.7.16",
+    "jose": "^4.9.0"
+  }
+}
