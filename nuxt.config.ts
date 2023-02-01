@@ -1,10 +1,16 @@
-import { defineNuxtConfig } from 'nuxt'
-
-// https://v3.nuxtjs.org/api/configuration/nuxt.config
+// https://nuxt.com/docs/getting-started/configuration
 export default defineNuxtConfig({
-  modules: [
-    '@nuxtjs/dotenv'
-  ],
+  runtimeConfig: {
+    auth0: {
+      clientId: process.env.AUTH0_CLIENT_ID,
+      clientSecret: process.env.AUTH0_CLIENT_SECRET,
+      audience: process.env.AUTH0_AUDIENCE,
+      issuer: process.env.AUTH0_ISSUER_BASE_URL,
+      orgId: process.env.AUTH0_ORG_ID,
+      redirectUri: process.env.AUTH0_REDIRECT_URI,
+    },
+    cookieName: '__session'
+  },
   typescript: {
     shim: false
   },

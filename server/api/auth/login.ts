@@ -1,15 +1,18 @@
-export default async (req, res) => {
-  const {
-    AUTH0_AUDIENCE,
-    AUTH0_CLIENT_ID,
-    AUTH0_ISSUER_BASE_URL,
-    AUTH0_REDIRECT_URI,
-  } = process.env;
-
-  const loginUrl = `${AUTH0_ISSUER_BASE_URL}/authorize?response_type=code&client_id=${AUTH0_CLIENT_ID}&redirect_uri=${AUTH0_REDIRECT_URI}&scope=openid%20profile%20email&audience=${AUTH0_AUDIENCE}`;
-
-  res.writeHead(302, {
-    Location: loginUrl,
+export default eventHandler((event) => {
+  const { auth0 } = useRuntimeConfig();
+  const loginUrl = new URL("/authorize?", auth0.issuer);
+  const loginUrlQuery = new URLSearchParams({
+    client_id: auth0.clientId,
+    client_secret: auth0.clientSecret,
+    redirect_uri: auth0.redirectUri,
+    response_type: "code",
+    scope: "openid profile email",
+    audience: auth0.audience,
   });
-  res.end();
-};
+
+  if (auth0.orgId) {
+    loginUrlQuery.append('organization', auth0.orgId);
+  }
+
+  return sendRedirect(event, loginUrl + loginUrlQuery.toString());
+});

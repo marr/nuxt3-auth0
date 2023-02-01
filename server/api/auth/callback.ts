@@ -1,29 +1,24 @@
-import Iron from "@hapi/iron";
+import Iron, { Password } from "@hapi/iron";
 import * as jose from "jose";
 
 export default defineEventHandler(async event => {
-  const {
-    AUTH0_ISSUER_BASE_URL,
-    AUTH0_CLIENT_ID,
-    AUTH0_CLIENT_SECRET,
-    AUTH0_COOKIE_NAME,
-    AUTH0_REDIRECT_URI,
-  } = process.env;
-
-  const params = useQuery(event.req);
+  const params = getQuery(event);
 
   if (params.error) {
     throw new Error(params.error as string);
   }
+
+  const { auth0, cookieName }= useRuntimeConfig();
+
   const body = JSON.stringify({
     grant_type: "authorization_code",
-    client_id: AUTH0_CLIENT_ID,
-    client_secret: AUTH0_CLIENT_SECRET,
+    client_id: auth0.clientId,
+    client_secret: auth0.clientSecret,
     code: params.code,
-    redirect_uri: AUTH0_REDIRECT_URI,
+    redirect_uri: auth0.redirectUri,
   }).toString()
 
-  const data = await fetch(`${AUTH0_ISSUER_BASE_URL}/oauth/token`, {
+  const data = await fetch(`${auth0.issuer}/oauth/token`, {
     method: "POST",
     headers: { "Content-type": "application/json" },
     body
@@ -33,11 +28,11 @@ export default defineEventHandler(async event => {
     await data.json();
 
   const JWKS = jose.createRemoteJWKSet(
-    new URL(`${AUTH0_ISSUER_BASE_URL}/.well-known/jwks.json`)
+    new URL(`${auth0.issuer}/.well-known/jwks.json`)
   );
 
   const { payload: user } = await jose.jwtVerify(id_token, JWKS, {
-    issuer: `${AUTH0_ISSUER_BASE_URL}/`,
+    issuer: `${auth0.issuer}/`,
   });
 
   const cookie = {
@@ -51,16 +46,20 @@ export default defineEventHandler(async event => {
 
   const sealedCookie = await Iron.seal(
     cookie,
-    AUTH0_CLIENT_SECRET,
+    auth0.clientSecret,
     Iron.defaults
   );
 
   const date = new Date();
   date.setDate(date.getDate() + 1);
 
-  event.res.writeHead(302, {
-    "Set-cookie": `${AUTH0_COOKIE_NAME}=${sealedCookie}; Path=/; Secure; HttpOnly; SameSite=Lax; Expires=${date.toUTCString()}`,
-    Location: "/",
+  setCookie(event, cookieName, sealedCookie, {
+    path: '/',
+    secure: false, // TODO: Infer this from baseURL (NUXT_APP_BASE_URL)
+    httpOnly: true,
+    sameSite: 'lax',
+    expires: date
   });
-  event.res.end();
+
+  return sendRedirect(event, '/');
 });

@@ -7,13 +7,13 @@
     "preview": "nuxt preview"
   },
   "devDependencies": {
-    "nuxt": "3.0.0-rc.8"
+    "nuxt": "3.1.2"
   },
   "dependencies": {
-    "@auth0/auth0-spa-js": "^1.22.2",
+    "@auth0/auth0-spa-js": "^2.0.2",
     "@hapi/iron": "^7.0.0",
     "@nuxtjs/dotenv": "^1.4.1",
-    "h3": "^0.7.16",
-    "jose": "^4.9.0"
+    "h3": "^1.1.0",
+    "jose": "^4.11.2"
   }
 }

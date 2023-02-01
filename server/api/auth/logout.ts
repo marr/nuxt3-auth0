@@ -1,9 +1,14 @@
-export default async (req, res) => {
-  const { AUTH0_ISSUER_BASE_URL, AUTH0_CLIENT_ID, AUTH0_COOKIE_NAME } = process.env;
 
-  res.writeHead(302, {
-    "Set-cookie": `${AUTH0_COOKIE_NAME}=; Path=/; Secure; HttpOnly; SameSite=Lax; Max-Age=0`,
-    Location: `${AUTH0_ISSUER_BASE_URL}/v2/logout?client_id=${AUTH0_CLIENT_ID}`,
-  });
-  res.end();
-};
+export default eventHandler(event => {
+  const config = useRuntimeConfig();
+
+  deleteCookie(event, config.cookieName);
+
+  const logoutUrl = new URL('/v2/logout?', config.auth0.issuer);
+  const logoutUrlParams = new URLSearchParams({
+    client_id: config.auth0.clientId,
+    returnTo: 'http://localhost:3000/' // TODO: Use config.app.baseURL (NUXT_APP_BASE_URL)
+  })
+
+  return sendRedirect(event, logoutUrl + logoutUrlParams.toString());
+});
