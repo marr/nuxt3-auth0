@@ -1,4 +1,4 @@
-import Iron, { Password } from "@hapi/iron";
+import Iron from "@hapi/iron";
 
 export default defineEventHandler(async (event) => {
   const config = useRuntimeConfig();

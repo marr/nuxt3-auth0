@@ -1,5 +1,6 @@
 // https://nuxt.com/docs/getting-started/configuration
 export default defineNuxtConfig({
+  modules: ["@nuxt/ui"],
   runtimeConfig: {
     auth0: {
       clientId: process.env.AUTH0_CLIENT_ID,

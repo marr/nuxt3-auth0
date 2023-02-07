@@ -1,11 +1,11 @@
-import Iron, { Password } from "@hapi/iron";
+import Iron from "@hapi/iron";
 import * as jose from "jose";
 
 export default defineEventHandler(async event => {
   const params = getQuery(event);
 
   if (params.error) {
-    throw new Error(params.error as string);
+    throw new Error(params.error.toString());
   }
 
   const { auth0, cookieName }= useRuntimeConfig();
@@ -55,7 +55,7 @@ export default defineEventHandler(async event => {
 
   setCookie(event, cookieName, sealedCookie, {
     path: '/',
-    secure: false, // TODO: Infer this from baseURL (NUXT_APP_BASE_URL)
+    secure: false, // TODO: Infer this from config
     httpOnly: true,
     sameSite: 'lax',
     expires: date
