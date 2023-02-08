@@ -8,7 +8,7 @@ export default defineEventHandler(async event => {
     throw new Error(params.error.toString());
   }
 
-  const { auth0, cookieName }= useRuntimeConfig();
+  const { auth0, cookieName, public: { siteUrl } }= useRuntimeConfig();
 
   const body = JSON.stringify({
     grant_type: "authorization_code",
@@ -53,13 +53,18 @@ export default defineEventHandler(async event => {
   const date = new Date();
   date.setDate(date.getDate() + 1);
 
+  let maybeRedirect;
+  if (event.context.session?.nonce === params.state) {
+    maybeRedirect = event.context.session.redirectTo;
+  }
+
   setCookie(event, cookieName, sealedCookie, {
     path: '/',
-    secure: false, // TODO: Infer this from config
+    secure: siteUrl.startsWith('https:'),
     httpOnly: true,
     sameSite: 'lax',
     expires: date
   });
 
-  return sendRedirect(event, '/');
+  return sendRedirect(event, maybeRedirect || '/');
 });

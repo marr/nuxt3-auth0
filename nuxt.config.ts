@@ -10,7 +10,10 @@ export default defineNuxtConfig({
       orgId: process.env.AUTH0_ORG_ID,
       redirectUri: process.env.AUTH0_REDIRECT_URI,
     },
-    cookieName: '__session'
+    cookieName: '__session',
+    public: {
+      siteUrl: 'http://localhost:3000'
+    }
   },
   typescript: {
     shim: false

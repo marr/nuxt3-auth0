@@ -1,5 +1,5 @@
 <template>
-  You are {{ user.name }}
+  You are {{ user?.name || 'exposed'}}
 </template>
 <script setup lang="ts">
 definePageMeta({

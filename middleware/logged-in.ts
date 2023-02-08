@@ -1,5 +1,7 @@
-export default defineNuxtRouteMiddleware(() => {
+export default defineNuxtRouteMiddleware((to) => {
+  const { siteUrl } = useRuntimeConfig().public;
   if (!useUser().value) {
-    return navigateTo('/login', { external: true });
+    const redirectTo = `?redirectTo=${siteUrl}` + to.path;
+    return navigateTo(`${siteUrl}/login` + redirectTo, { external: true });
   }
 });
