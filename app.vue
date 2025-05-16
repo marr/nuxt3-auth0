@@ -1,8 +1,5 @@
 <template>
-  <NuxtExampleLayout example="auth">
-    <template #nav>
-      <SiteHeader />
-    </template>
+  <UApp>
     <NuxtPage />
-  </NuxtExampleLayout>
+  </UApp>
 </template>
